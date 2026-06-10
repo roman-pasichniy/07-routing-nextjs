@@ -23,8 +23,34 @@ export default function NotePreviewClient({ id }: NotePreviewClientProps) {
     refetchOnMount: false,
   });
 
-  if (isLoading) return null;
-  if (error || !note) return null;
+  if (isLoading) {
+    return (
+      <Modal onClose={() => router.back()}>
+        <div className={css.container}>
+          <div className={css.item}>
+            <p className={css.status}>Loading note…</p>
+          </div>
+        </div>
+      </Modal>
+    );
+  }
+
+  if (error || !note) {
+    return (
+      <Modal onClose={() => router.back()}>
+        <div className={css.container}>
+          <div className={css.item}>
+            <p className={css.error}>
+              Could not load this note. Please try again or close the preview.
+            </p>
+            <button className={css.backBtn} onClick={() => router.back()}>
+              Close
+            </button>
+          </div>
+        </div>
+      </Modal>
+    );
+  }
 
   return (
     <Modal onClose={() => router.back()}>

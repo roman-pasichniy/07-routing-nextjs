@@ -54,6 +54,26 @@
   text-overflow: ellipsis;
 }
 
+.status,
+.error {
+  font-size: 16px;
+  line-height: 24px;
+  margin: 0;
+  padding: 0;
+}
+
+.status {
+  color: #333;
+}
+
+.error {
+  color: #c92a2a;
+  background-color: #fff1f0;
+  border: 1px solid #f5c2c7;
+  padding: 16px;
+  border-radius: 8px;
+}
+
 .backBtn {
   align-self: flex-start;
   padding: 6px 12px;
@@ -65,4 +85,5 @@
   text-decoration: underline;
   display: inline-block;
   background-color: transparent;
+  margin-top: 16px;
 }
