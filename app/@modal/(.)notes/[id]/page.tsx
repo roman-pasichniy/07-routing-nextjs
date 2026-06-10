@@ -1,43 +1,24 @@
-'use client';
-
-import { useQuery } from '@tanstack/react-query';
-import { useRouter } from 'next/navigation';
+import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query';
 import { fetchNoteById } from '@/lib/api';
-import Modal from '@/components/Modal/Modal';
-import css from '@/components/NotePreview/NotePreview.module.css';
+import NotePreviewClient from './NotePreview.client';
 
-interface NotePreviewClientProps {
-  id: string;
-}
+type Props = {
+  params: Promise<{ id: string }>;
+};
 
-export default function NotePreviewClient({ id }: NotePreviewClientProps) {
-  const router = useRouter();
+export default async function InterceptedNotePage({ params }: Props) {
+  const { id } = await params;
 
-  const {
-    data: note,
-    isLoading,
-    error,
-  } = useQuery({
+  const queryClient = new QueryClient();
+
+  await queryClient.prefetchQuery({
     queryKey: ['note', id],
     queryFn: () => fetchNoteById(id),
-    refetchOnMount: false,
   });
 
-  if (isLoading) return null;
-  if (error || !note) return null;
-
   return (
-    <Modal onClose={() => router.back()}>
-      <div className={css.container}>
-        <div className={css.item}>
-          <div className={css.header}>
-            <h2>{note.title}</h2>
-          </div>
-          <p className={css.tag}>{note.tag}</p>
-          <p className={css.content}>{note.content}</p>
-          <p className={css.date}>{note.createdAt}</p>
-        </div>
-      </div>
-    </Modal>
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <NotePreviewClient id={id} />
+    </HydrationBoundary>
   );
 }
